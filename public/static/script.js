@@ -75,6 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/create-account/${userId}`;
     }
 
+    // Reads the response body as text first, then tries to parse it as
+    // JSON. A server error can come back with an empty or non-JSON body
+    // (e.g. a crashed function) -- calling response.json() directly on
+    // that throws "Unexpected end of JSON input" and hides what actually
+    // went wrong. This returns null instead so the caller can fall back
+    // to a status-based message.
+    async function safeJson(response) {
+        const text = await response.text();
+        if (!text) return null;
+        try {
+            return JSON.parse(text);
+        } catch {
+            return null;
+        }
+    }
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
@@ -94,19 +110,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ email, firstName, lastName, phone, birthday }),
             });
 
+            const responseData = await safeJson(response);
+
             if (response.ok) {
                 console.log('Signup successful');
-                const userData = await response.json();
-                redirectToAccountCreation(userData.userId);
+                redirectToAccountCreation(responseData && responseData.userId);
             } else {
-                const errorData = await response.json();
-                if (errorData.error === "This phone number is already verified and in use") {
+                const errorMessage = (responseData && responseData.error)
+                    || `Server error (status ${response.status}). Please try again.`;
+                if (errorMessage === "This phone number is already verified and in use") {
                     alert("This phone number is already verified and in use. Please use a different phone number.");
-                } else if (errorData.error === "This email is already verified and in use") {
+                } else if (errorMessage === "This email is already verified and in use") {
                     alert("This email is already verified and in use. Please use a different email address.");
                 } else {
-                    alert(`Signup failed: ${errorData.error}`);
+                    alert(`Signup failed: ${errorMessage}`);
                 }
+                console.error('Signup failed:', response.status, responseData);
             }
         } catch (error) {
             console.error('Error:', error);
