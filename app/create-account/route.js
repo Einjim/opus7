@@ -14,9 +14,9 @@ import bcrypt from 'bcryptjs';
 import { put } from '@vercel/blob';
 import { withConnection, ApiEarlyReturn } from '../../lib/db';
 import { getSession } from '../../lib/session';
-import { secureFilename } from '../../lib/apiHelpers';
+import { secureFilename, withErrorHandling } from '../../lib/apiHelpers';
 
-export async function POST(request) {
+export const POST = withErrorHandling(async (request) => {
   const formData = await request.formData();
   const username = formData.get('username');
   const password = formData.get('password');
@@ -63,4 +63,4 @@ export async function POST(request) {
     { message: 'Account created successfully', redirect: '/quiz_app' },
     { status: 200 }
   );
-}
+});
