@@ -4,8 +4,9 @@
 
 import { NextResponse } from 'next/server';
 import { withConnection, ApiEarlyReturn } from '../../lib/db';
+import { withErrorHandling } from '../../lib/apiHelpers';
 
-export async function POST(request) {
+export const POST = withErrorHandling(async (request) => {
   const data = await request.json();
 
   try {
@@ -42,4 +43,4 @@ export async function POST(request) {
     }
     throw err;
   }
-}
+});
