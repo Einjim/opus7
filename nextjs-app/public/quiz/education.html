@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آموزش</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet"
+    type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+        font-family: 'Vazir', sans-serif;
+    }
+    
+    .drawer { visibility: hidden; opacity: 0; transition: visibility 0s 0.3s, opacity 0.3s ease-in-out; }
+    .drawer.is-open { visibility: visible; opacity: 1; transition: opacity 0.3s ease-in-out; }
+    .drawer-panel { transform: translateX(100%); transition: transform 0.3s ease-in-out; }
+    .drawer.is-open .drawer-panel { transform: translateX(0); }
+    .image-modal { visibility: hidden; opacity: 0; transition: opacity 0.3s ease-in-out; }
+    .image-modal.is-visible { visibility: visible; opacity: 1; }
+
+    /* --- Styles for Animated Icons --- */
+
+    .icon-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8fafc; /* Light gray background */
+        overflow: hidden;
+    }
+    
+    /* Math Icon: Compass Animation */
+    .math-icon .compass-arm {
+        transform-origin: 50px 90px;
+        animation: draw-arc 3s ease-in-out infinite;
+    }
+    .math-icon .arc {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        animation: write-arc 3s ease-in-out infinite;
+    }
+    @keyframes draw-arc {
+        0%, 100% { transform: rotate(-30deg); }
+        50% { transform: rotate(45deg); }
+    }
+    @keyframes write-arc {
+        0%, 20%, 100% { stroke-dashoffset: 100; }
+        70% { stroke-dashoffset: 0; }
+    }
+
+    /* Physics Icon: Atom Animation */
+    .physics-icon .orbit {
+        transform-origin: center;
+        animation: rotate-orbit 10s linear infinite;
+    }
+    .physics-icon .electron {
+        animation: pulse-electron 2s ease-in-out infinite;
+    }
+    .physics-icon .orbit2 { animation-duration: 7s; }
+    .physics-icon .orbit3 { animation-duration: 5s; }
+    @keyframes rotate-orbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    @keyframes pulse-electron {
+        0%, 100% { r: 3.5; opacity: 0.8; }
+        50% { r: 5; opacity: 1; }
+    }
+
+    /* Chemistry Icon: Bubbling Flask Animation */
+    .chem-icon .bubble {
+        transform-origin: center;
+        animation: rise-bubble 4s linear infinite;
+        opacity: 0;
+    }
+    .chem-icon .bubble2 { animation-delay: 1s; animation-duration: 4.5s; }
+    .chem-icon .bubble3 { animation-delay: 2.2s; animation-duration: 3.5s; }
+    .chem-icon .bubble4 { animation-delay: 3s; animation-duration: 4.2s; }
+    @keyframes rise-bubble {
+        0% { transform: translateY(0); opacity: 0.8; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-40px); opacity: 0; }
+    }
+    
+    /* Biology Icon: DNA Animation */
+    .bio-icon .strand {
+        animation: twist-dna 4s ease-in-out infinite;
+        transform-origin: center;
+    }
+    @keyframes twist-dna {
+        0%, 100% { transform: scaleY(1) translateY(0); }
+        50% { transform: scaleY(0.7) translateY(5px); }
+    }
+
+    /* Test Analysis Thumbnail Animation (Unchanged) */
+    .animated-thumbnail { width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .chart-animation { display: flex; align-items: end; gap: 8px; height: 60px; }
+    .bar { width: 12px; background: white; border-radius: 2px; animation: barGrow 2s ease-in-out infinite; }
+    .bar1 { height: 30px; animation-delay: 0s; }
+    .bar2 { height: 45px; animation-delay: 0.5s; }
+    .bar3 { height: 55px; animation-delay: 1s; }
+    .bar4 { height: 25px; animation-delay: 1.5s; }
+    @keyframes barGrow { 0%, 100% { transform: scaleY(1); opacity: 0.7; } 50% { transform: scaleY(1.3); opacity: 1; } }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-vazir text-right">
+  <div class="min-h-screen pb-24"> 
+    <!-- Header (Unchanged) -->
+    <header class="flex justify-between items-center p-4 bg-white shadow-sm">
+        <div id="profile-header-button" class="flex items-center gap-2 cursor-pointer">
+            <div class="relative w-10 h-10 rounded-full overflow-hidden">
+                <img id="profile-pic" src="" alt="Profile" class="object-cover" width="40" height="40">
+            </div>
+            <div>
+                <h2 id="user-name" class="text-sm font-bold"></h2>
+                <span id="username" class="text-xs text-blue-500"></span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1" title="Streaks"><span id="streaks-count" class="font-bold">0</span><span class="text-xl">🔥</span></div>
+            <div class="flex items-center gap-1" title="Coins"><span id="coins-count" class="font-bold text-amber-500">0</span><span class="text-xl">🪙</span></div>
+            <div class="flex items-center gap-1" title="Health"><span id="hp-count" class="font-bold text-red-500">0</span><span class="text-xl">❤️</span></div>
+        </div>
+    </header>
+
+    <!-- Main Content (Updated with Help Button) -->
+    <main class="p-4">
+      <div class="max-w-md mx-auto">
+        <div class="flex justify-center items-center gap-2 mb-6">
+            <h2 class="text-2xl sm:text-3xl font-bold text-indigo-600">بخش آموزش</h2>
+            <button id="help-button" class="text-blue-500 bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-blue-200 transition-colors" title="راهنما">؟</button>
+        </div>
+
+        <div class="space-y-4">
+          
+          <!-- Test Analysis Card -->
+          <div class="category-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-1 cursor-pointer border-2 border-indigo-500 shadow-indigo-500/20" data-subject="test-analysis">
+            <div class="h-32">
+              <div class="animated-thumbnail">
+                <div class="chart-animation">
+                  <div class="bar bar1"></div> <div class="bar bar2"></div> <div class="bar bar3"></div> <div class="bar bar4"></div>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 text-center">
+              <h3 class="font-bold text-lg text-gray-800">تحلیل آزمون</h3>
+              <p class="text-sm text-gray-600 mt-1">برنامه پیشرفت بر اساس ۵ آزمون اخیر شما</p>
+            </div>
+          </div>
+
+          <!-- Math Card with Animated Icon -->
+          <div class="category-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-1 cursor-pointer" data-subject="math">
+            <div class="h-32 icon-container">
+                <svg class="math-icon" width="100" height="100" viewBox="0 0 100 100">
+                    <path class="arc" d="M 60 82 A 30 30 0 0 1 82 60" stroke="#4f46e5" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <g class="compass-arm" fill="#4a5568">
+                        <line x1="50" y1="90" x2="40" y2="20" stroke="#a0aec0" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="50" y1="90" x2="80" y2="50" stroke="#a0aec0" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="50" cy="90" r="4"/>
+                        <circle cx="80" cy="50" r="3"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="p-4 text-center">
+              <h3 class="font-bold text-lg text-gray-800">ریاضی</h3>
+              <p class="text-sm text-gray-600 mt-1">آموزش مفاهیم ریاضی</p>
+            </div>
+          </div>
+
+          <!-- Physics Card with Animated Icon -->
+          <div class="category-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-1 cursor-pointer" data-subject="physics">
+            <div class="h-32 icon-container">
+                <svg class="physics-icon" width="100" height="100" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="8" fill="#ef4444"/>
+                    <ellipse class="orbit orbit1" cx="50" cy="50" rx="40" ry="15" stroke="#9ca3af" stroke-width="2" fill="none"/>
+                    <ellipse class="orbit orbit2" cx="50" cy="50" rx="40" ry="15" transform="rotate(60 50 50)" stroke="#9ca3af" stroke-width="2" fill="none"/>
+                    <ellipse class="orbit orbit3" cx="50" cy="50" rx="40" ry="15" transform="rotate(-60 50 50)" stroke="#9ca3af" stroke-width="2" fill="none"/>
+                    <circle class="electron" cx="10" cy="50" r="4" fill="#3b82f6"/>
+                </svg>
+            </div>
+            <div class="p-4 text-center">
+              <h3 class="font-bold text-lg text-gray-800">فیزیک</h3>
+              <p class="text-sm text-gray-600 mt-1">آموزش مفاهیم فیزیک</p>
+            </div>
+          </div>
+
+          <!-- Chemistry Card with Animated Icon -->
+          <div class="category-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-1 cursor-pointer" data-subject="chemistry">
+            <div class="h-32 icon-container">
+                <svg class="chem-icon" width="100" height="100" viewBox="0 0 100 100">
+                    <path d="M 25 85 L 25 40 Q 25 30 35 30 L 65 30 Q 75 30 75 40 L 75 85 Z" stroke="#9ca3af" stroke-width="2" fill="#ecfccb"/>
+                    <path d="M 30 30 L 70 30" stroke="#9ca3af" stroke-width="2"/>
+                    <g fill="#84cc16">
+                        <circle class="bubble bubble1" cx="40" cy="80" r="3"/>
+                        <circle class="bubble bubble2" cx="50" cy="80" r="4"/>
+                        <circle class="bubble bubble3" cx="60" cy="80" r="3.5"/>
+                        <circle class="bubble bubble4" cx="45" cy="80" r="2.5"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="p-4 text-center">
+              <h3 class="font-bold text-lg text-gray-800">شیمی</h3>
+              <p class="text-sm text-gray-600 mt-1">آموزش مفاهیم شیمی</p>
+            </div>
+          </div>
+
+          <!-- Biology Card with Animated Icon -->
+          <div class="category-card bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:-translate-y-1 cursor-pointer" data-subject="biology">
+            <div class="h-32 icon-container">
+                <svg class="bio-icon" width="100" height="100" viewBox="0 0 100 100">
+                    <g class="strand">
+                        <path d="M 40 10 C 60 30, 20 50, 40 70 S 60 90, 40 90" stroke="#3b82f6" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <path d="M 60 10 C 40 30, 80 50, 60 70 S 40 90, 60 90" stroke="#fb923c" stroke-width="4" fill="none" stroke-linecap="round"/>
+                        <line x1="42" y1="20" x2="58" y2="20" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="32" y1="40" x2="68" y2="40" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="42" y1="60" x2="58" y2="60" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="42" y1="80" x2="58" y2="80" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="p-4 text-center">
+                <h3 class="font-bold text-lg text-gray-800">زیست‌شناسی</h3>
+                <p class="text-sm text-gray-600 mt-1">آموزش مفاهیم زیست</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer and Drawer (Unchanged) -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t">
+        <nav class="flex justify-around p-3">
+            <button class="flex flex-col items-center gap-1 text-gray-500" data-tab="home"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="text-xs">خانه</span></button>
+            <button id="game-island-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="game-island"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></svg><span class="text-xs">جزیره بازی</span></button>
+            <button id="education-btn" class="flex flex-col items-center gap-1 text-blue-500" data-tab="education"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg><span class="text-xs">آموزش</span></button>
+            <button id="ranking-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="ranking"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg><span class="text-xs">رتبه‌بندی</span></button>
+            <button id="profile-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="profile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="text-xs">پروفایل</span></button>
+        </nav>
+    </footer>
+  </div>
+  
+    <div id="profile-drawer" class="drawer fixed inset-0 z-50">
+        <div id="drawer-overlay" class="absolute inset-0 bg-black/50"></div>
+        <div class="drawer-panel absolute top-0 right-0 h-full w-72 bg-white shadow-xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">پروفایل کاربری</h2>
+                <button id="close-drawer-btn" class="text-gray-500 hover:text-gray-800"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div class="space-y-4">
+                 <div class="flex flex-col items-center space-y-2 border-b pb-4">
+                    <div class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-blue-500 cursor-pointer"><img id="drawer-profile-pic" src="" alt="Profile" class="object-cover w-full h-full"></div>
+                    <h3 id="drawer-user-name" class="text-lg font-bold"></h3><p id="drawer-username" class="text-sm text-gray-500"></p>
+                </div>
+                <nav class="space-y-2">
+                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"><span>✏️</span><span>ویرایش پروفایل</span></a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition"><span>⚙️</span><span>تنظیمات</span></a>
+                    <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition text-red-500"><span>🚪</span><span>خروج از حساب</span></a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    
+    <div id="image-viewer-modal" class="image-modal fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 cursor-pointer">
+        <img id="full-view-image" src="" alt="Full view profile picture" class="max-w-full max-h-full rounded-lg shadow-xl">
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 text-right relative">
+            <button id="close-help-modal" class="absolute top-3 left-3 text-gray-400 hover:text-gray-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 class="text-xl font-bold mb-4 text-indigo-600">راهنما</h3>
+            <div class="space-y-4 text-gray-700 leading-relaxed">
+                <p>سلام! تمام این فیلم‌ها توسط خانم دکتر سرندیپیتی در اختیار کوییزینو قرار گرفته است، حق کپی رایت برای استفاده و مقاصد آموزشی بلامانع است.</p>
+                <p>قسمت تحلیل آزمون، بر اساس رفع اشکال و سوالات صحیح پاسخ داده شده و سوالات پاسخ داده نشده در پنج آزمون اخیر شما انجام می‌گیرید. برای آپدیت شدن این بخش لطفا به صورت مرتب در آزمون‌ها (آزمون فردی، دو نفره یا گروهی) شرکت کنید.</p>
+            </div>
+        </div>
+    </div>
+
+  <script src="education.js"></script>
+</body>
+</html>

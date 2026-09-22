@@ -1,0 +1,96 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input,
+button {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+input[type="tel"]::placeholder {
+  color: #999;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+  padding: 0.7rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.birthday-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.birthday-container label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+#circular-date-picker {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.picker .up,
+.picker .down {
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.2rem;
+  color: #007bff;
+}
+
+.picker .value {
+  margin: 0.5rem 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+}

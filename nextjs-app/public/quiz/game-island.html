@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جزیره بازی</title>
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet"
+    type="text/css" />
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Game Island specific styles */
+    .game-island-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      width: 100%;
+      /* Make container responsive */
+    }
+
+    .game-island-title {
+      font-size: 2rem;
+      /* Responsive font size */
+      font-weight: bold;
+      margin-bottom: 2rem;
+      color: #4c6ef5;
+    }
+
+    /* Island Grid Styles */
+    .island-grid {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 900px;
+      /* Limit width */
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      /* Make the grid a positioning context */
+    }
+
+    .island-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+      /* Reduced margin for smaller screens */
+      flex-wrap: wrap;
+      /* Allow items to wrap on smaller screens */
+    }
+
+    .island,
+    .treasure-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      /* Smaller islands for responsiveness */
+      height: 60px;
+      border-radius: 50%;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      cursor: pointer;
+      border: 2px solid transparent;
+      font-size: 1.2rem;
+      /* Responsive font size */
+      font-weight: bold;
+      color: #212529;
+      text-decoration: none;
+      margin: 0.5rem;
+      /* Smaller margin for spacing */
+    }
+
+    .island:hover,
+    .treasure-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      border-color: #4c6ef5;
+    }
+
+    .island.completed,
+    .treasure-box.completed {
+      background-color: #d8f3dc;
+      color: #37b24d;
+      border-color: #74c0fc;
+    }
+
+    .island.locked,
+    .treasure-box.locked {
+      background-color: #f8f9fa;
+      color: #adb5bd;
+      cursor: not-allowed;
+    }
+
+    .island.locked:hover,
+    .treasure-box.locked:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: transparent;
+    }
+
+    .treasure-box {
+      font-size: 1.5rem;
+      /* Responsive font size */
+      color: #e67700;
+    }
+
+    .trophy-icon {
+      font-size: 3rem;
+      /* Responsive font size */
+      color: #fcc419;
+      margin-bottom: 1rem;
+    }
+
+    .trophy-message {
+      text-align: center;
+    }
+
+    /* Media query for larger screens */
+    @media (min-width: 768px) {
+      .game-island-title {
+        font-size: 2.5rem;
+      }
+
+      .island,
+      .treasure-box {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+        margin: 1rem;
+      }
+
+      .treasure-box {
+        font-size: 2rem;
+      }
+
+      .trophy-icon {
+        font-size: 4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="min-h-screen bg-gray-50 font-vazir text-right">
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4 bg-white shadow-sm">
+      <div class="flex items-center gap-2">
+        <div class="relative w-10 h-10 rounded-full overflow-hidden">
+          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-eOJEvcsGZ7edRX7vPJv0MGrOHqJmsx.png"
+            alt="Profile" class="object-cover" width="40" height="40">
+        </div>
+        <div>
+          <h2 class="text-sm font-bold">خدایار خلیلی زاده</h2>
+          <span class="text-xs text-blue-500">رشته ریاضی</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-amber-500 font-bold">2452</span>
+        <span class="text-amber-500">🪙</span>
+        <span>❤️ 5</span>
+      </div>
+    </header>
+
+    <!-- Main Content - Game Island -->
+    <main class="p-4 space-y-6">
+      <div class="game-island-container">
+        <h2 class="game-island-title">جزیره بازی</h2>
+
+        <div class="island-grid">
+          <!-- Islands will be dynamically added here -->
+        </div>
+
+        <div class="mt-8 trophy-message">
+          <span class="trophy-icon">🏆</span>
+          <p class="text-xl font-semibold">به زودی بازی های بیشتری اضافه می شوند!</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Navigation -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t">
+      <nav class="flex justify-around p-3">
+        <button class="flex flex-col items-center gap-1 text-gray-500" data-tab="home">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span class="text-xs">خانه</span>
+        </button>
+        <button id="game-island-btn" class="flex flex-col items-center gap-1 text-blue-500" data-tab="game-island">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <circle cx="12" cy="12" r="10" />
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+          </svg>
+          <span class="text-xs">جزیره بازی</span>
+        </button>
+        <button id="ranking-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="ranking">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+          </svg>
+          <span class="text-xs">رتبه‌بندی</span>
+        </button>
+        <button id="education-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="stats">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+          <span class="text-xs">آموزش</span>
+        </button>
+        <button id="profile-btn" class="flex flex-col items-center gap-1 text-gray-500" data-tab="profile">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span class="text-xs">پروفایل</span>
+        </button>
+      </nav>
+    </footer>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const islandGrid = document.querySelector('.island-grid');
+      const numIslands = 50;
+      let currentLevel = 1; // Track current level
+      const completedLevels = new Set(); // Track completed levels
+
+      // Load completed levels from local storage
+      if (localStorage.getItem('completedLevels')) {
+        const storedLevels = localStorage.getItem('completedLevels');
+        completedLevels.clear(); // Clear existing set
+        JSON.parse(storedLevels).forEach(level => completedLevels.add(level));
+        currentLevel = Math.max(...Array.from(completedLevels)) + 1;
+      }
+
+      function saveCompletedLevels() {
+        localStorage.setItem('completedLevels', JSON.stringify(Array.from(completedLevels)));
+      }
+
+      function createIsland(i) {
+        const isTreasureBox = (i % 10 === 0);
+        const element = document.createElement(isTreasureBox ? 'div' : 'a');
+
+        element.href = isTreasureBox ? '#' : '#'; // Add link to the level
+
+        element.classList.add(isTreasureBox ? 'treasure-box' : 'island');
+        element.textContent = isTreasureBox ? '🎁' : i; //Treasure icon
+
+        if (i <= currentLevel) {
+          element.classList.add('unlocked'); // All previous levels are unlocked
+        } else {
+          element.classList.add('locked');
+        }
+
+        if (completedLevels.has(i)) {
+          element.classList.add('completed');
+        }
+
+        // Click event for unlocked and not completed islands
+        if (!completedLevels.has(i) && i === currentLevel) {
+          element.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent navigating away
+            alert(`شما وارد مرحله ${i} شدید!`);
+            completedLevels.add(i);
+            element.classList.add('completed');
+
+            currentLevel++;
+            if (currentLevel <= numIslands) {
+              const nextElement = islandGrid.querySelector(
+                `.${currentLevel % 10 === 0 ? 'treasure-box' : 'island'}:nth-child(${currentLevel})`
+              );
+              if (nextElement) {
+                nextElement.classList.remove('locked');
+                nextElement.classList.add('unlocked');
+              }
+            }
+            saveCompletedLevels();
+            updateIslandStyles();
+          });
+        }
+
+        return element;
+      }
+
+      function updateIslandStyles() {
+        const islands = islandGrid.querySelectorAll('.island, .treasure-box');
+        islands.forEach((island, index) => {
+          const i = index + 1;
+          island.className = i % 10 === 0 ? 'treasure-box' : 'island'; // Reset classes
+          island.textContent = i % 10 === 0 ? '🎁' : i; // Keep the number and icon
+
+          if (completedLevels.has(i)) {
+            island.classList.add('completed');
+          }
+
+          if (i <= currentLevel && !completedLevels.has(i)) {
+            island.classList.add('unlocked');
+          } else if (!completedLevels.has(i)) {
+            island.classList.add('locked');
+          }
+
+          if (!completedLevels.has(i) && i === currentLevel) {
+            island.addEventListener('click', function unlock(event) {
+              event.preventDefault(); // Prevent navigating away
+              alert(`شما وارد مرحله ${i} شدید!`);
+              completedLevels.add(i);
+              island.classList.add('completed');
+
+              currentLevel++;
+              if (currentLevel <= numIslands) {
+                const nextElement = islandGrid.querySelector(
+                  `.${currentLevel % 10 === 0 ? 'treasure-box' : 'island'}:nth-child(${currentLevel})`
+                );
+                if (nextElement) {
+                  nextElement.classList.remove('locked');
+                  nextElement.classList.add('unlocked');
+                }
+              }
+              saveCompletedLevels();
+              updateIslandStyles();
+              island.removeEventListener('click', unlock);
+            });
+          }
+        });
+      }
+      let islandRow;
+      for (let i = 1; i <= numIslands; i++) {
+        if (i % 5 === 1) {
+          islandRow = document.createElement('div');
+          islandRow.classList.add('island-row');
+          islandGrid.appendChild(islandRow);
+        }
+
+        const island = createIsland(i);
+        islandRow.appendChild(island);
+      }
+
+      //Initial Styles
+      updateIslandStyles();
+    });
+  </script>
+  <script src="scripts.js"></script>
+</body>
+
+</html>

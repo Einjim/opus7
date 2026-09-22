@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <title>کوییزینو | ایجاد حساب کاربری</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* --- Core Responsive Styles (Mobile First) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazir', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3f4f6;
+            padding: 1rem; /* Add padding for very small screens */
+        }
+
+        .container {
+            background-color: white;
+            padding: 1.5rem; /* Smaller padding for mobile */
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Use full width on mobile */
+            max-width: 420px; /* Slightly larger max-width */
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem; /* Smaller font size for mobile */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="tel"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        button[type="submit"] {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #2563eb;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .links a {
+            color: #3b82f6;
+            text-decoration: none;
+            margin: 0 0.25rem;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            text-align: center;
+            display: none;
+            margin-top: -0.5rem; /* Pull it closer to the button */
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Page-Specific Styles --- */
+        .profile-picture-container {
+            width: 120px; /* Smaller base size for mobile */
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 1rem;
+            position: relative;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border: 2px solid #d1d5db;
+            transition: all 0.2s;
+        }
+
+        .profile-picture-container:hover {
+            border-color: #3b82f6;
+            transform: scale(1.05);
+        }
+
+        .profile-picture-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-picture-container .placeholder {
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #profile-picture {
+            display: none;
+        }
+
+        /* --- Media Query for Laptops & Larger Screens --- */
+        @media (min-width: 600px) {
+            .container {
+                padding: 2.5rem; /* More padding on larger screens */
+            }
+
+            h1 {
+                font-size: 1.75rem; /* Larger heading */
+                margin-bottom: 2rem;
+            }
+            
+            .profile-picture-container {
+                width: 150px; /* Restore original size on larger screens */
+                height: 150px;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="create-account-page">
+        <h1>ایجاد حساب کاربری</h1>
+        <form id="create-account-form" enctype="multipart/form-data">
+            <div class="profile-picture-container">
+                <img id="profile-picture-preview" src="#" alt="تصویر پروفایل" style="display: none;">
+                <span class="placeholder">انتخاب تصویر پروفایل</span>
+            </div>
+            <input type="file" id="profile-picture" accept="image/*">
+            <input type="text" id="username" placeholder="نام کاربری" required>
+            <input type="password" id="password" placeholder="رمز عبور" required>
+            <input type="password" id="confirm-password" placeholder="تکرار رمز عبور" required>
+            <input type="hidden" id="user-id" value="__USER_ID__">
+            <div class="error-message" id="error-message"></div>
+            <button type="submit">ایجاد حساب</button>
+        </form>
+        <div class="links">
+            <a href="/">بازگشت به ثبت نام</a>
+            <span>|</span>
+            <a href="/signin">وارد شوید</a>
+        </div>
+    </div>
+    <!-- Your JS file is perfect, no changes needed -->
+    <script src="/static/create_account.js"></script>
+</body>
+</html>
